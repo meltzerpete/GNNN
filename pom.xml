@@ -28,6 +28,22 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- OGM -->
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-ogm-core</artifactId>
+      <version>3.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Only add if you're using the Bolt driver -->
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-ogm-bolt-driver</artifactId>
+      <version>3.0.0</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- Test Dependencies -->
     <dependency>
       <!-- This is used for a utility that lets us start Neo4j with
@@ -73,6 +89,11 @@
              After a restart, the procedure is available for calling. -->
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.3</version>
+        <configuration>
+          <outputDirectory>
+            /var/lib/neo4j/plugins/
+          </outputDirectory>
+        </configuration>
         <executions>
           <execution>
             <phase>package</phase>

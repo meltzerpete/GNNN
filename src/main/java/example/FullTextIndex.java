@@ -121,6 +121,8 @@ public class FullTextIndex
     {
         Node node = db.getNodeById( nodeId );
 
+        log.debug("test message");
+
         // Load all properties for the node once and in bulk,
         // the resulting set will only contain those properties in `propKeys`
         // that the node actually contains.
