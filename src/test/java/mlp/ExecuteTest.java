@@ -30,7 +30,7 @@ public class ExecuteTest {
             Session session = driver.session() )
         {
 
-            session.run("call mlp.completeTest();");
+            session.run("call mlp.proto1test1(1);");
 
         }
     }

@@ -188,7 +188,6 @@ public class Classifier {
 
     private void updateWeights(Node node, double reward) {
 
-
         // calculate delta
         double y = (double) node.getProperty(Y.toString());
         double fa = (double) node.getProperty(FA.toString());
@@ -231,11 +230,13 @@ public class Classifier {
 
     @Procedure(value = "mlp.train", mode = WRITE)
     @Description("Backward pass through NN")
-    public void train(@Name(value = "no. of passes") long n) {
+    public void train(@Name(value = "no. of passes") long nPasses) {
 
-        LinkedList<Double> errors = new LinkedList<>();
+//        LinkedList<Double> errors = new LinkedList<>();
 
-        for (int i = 0; i < n; i++) {
+        DataLogger logger = new DataLogger("proto1", "error");
+
+        for (int i = 0; i < nPasses; i++) {
             updateTrainRate(i + 1);
             forwardPass();
 
@@ -250,16 +251,20 @@ public class Classifier {
 
 
 //            System.out.println(String.format("Error: %f", error));
-            if (i % 100 == 0 && i > 0) {
-                double meanError = errors.stream().reduce(0.0, Double::sum) / 100;
-                System.out.println(String.format(
-                        "Mean error: %f, eta: %f", meanError, eta));
-                errors.clear();
-            }
-            errors.add(error);
+//            if (i % 100 == 0 && i > 0) {
+//                double meanError = errors.stream().reduce(0.0, Double::sum) / 100;
+//                System.out.println(String.format(
+//                        "Mean error: %f, eta: %f", meanError, eta));
+//                errors.clear();
+//            }
+//            errors.add(error);
+            logger.append(error);
+
+
         }
 
         forwardPass();
+        logger.close();
     }
 
     private double calculateError() {

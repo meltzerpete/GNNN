@@ -1,6 +1,7 @@
 package example;
 
 import mlp.Classifier;
+import mlp.DataLogger;
 import mlp.Execute;
 import mlp.GraphGenerator;
 import org.junit.Rule;
@@ -12,6 +13,9 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.harness.junit.Neo4jRule;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
 import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,14 +24,6 @@ import java.util.stream.Stream;
  * Created by Pete Meltzer on 19/10/17.
  */
 public class Random {
-
-    // This rule starts a Neo4j instance
-    @Rule
-    public Neo4jRule neo4j = new Neo4jRule()
-
-            // This is the function we want to test
-            .withProcedure( GraphGenerator.class )
-            .withProcedure( Classifier.class );
 
     @Test
     public void testingXOR() throws Throwable {
@@ -55,21 +51,25 @@ public class Random {
     }
 
     @Test
-    public void completeTest() throws Throwable {
-        // This is in a try-block, to make sure we close the driver after the test
-        // In a try-block, to make sure we close the driver and session after the test
-        try(Driver driver = GraphDatabase.driver( neo4j.boltURI() , Config.build()
-                .withEncryptionLevel( Config.EncryptionLevel.NONE ).toConfig() );
-            Session session = driver.session() )
-        {
+    public void dateTest() {
+        System.out.println(new SimpleDateFormat("yyyy-MM-dd:kk-mm-ss").format(new Date()));
 
-            session.run("match (n) detach delete n;");
-            session.run("call mlp.XOR(1000);");
-            session.run("call mlp.createMLP();");
-            session.run("call mlp.attach();");
-            session.run("call mlp.train(100000);");
-            System.out.println("done");
+    }
 
+    @Test
+    public void dataLoggerTest() {
+
+        DataLogger logger = new DataLogger("test", "a", "b", "c");
+
+    }
+
+    @Test
+    public void stringPrinting() {
+        int nTrials = 100;
+
+        for (int i = 0; i < nTrials; i++) {
+            String bar = String.join("", Collections.nCopies(i, "\u2588"));
+            System.out.print(String.format("\r|%99s|", bar));
         }
     }
 
