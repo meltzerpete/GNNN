@@ -224,9 +224,9 @@ public class Classifier {
         eta = eta_0 / (Math.pow(t, 0.55));
     }
 
-    public double sigmoid(double x) {
-        return 1 / (1 + Math.exp(-x));
-    }
+public double sigmoid(double x) {
+    return 1 / (1 + Math.exp(-x));
+}
 
     @Procedure(value = "mlp.train", mode = WRITE)
     @Description("Backward pass through NN")
