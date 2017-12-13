@@ -1,17 +1,7 @@
 package example;
 
-import mlp.Classifier;
-import mlp.DataLogger;
-import mlp.Execute;
-import mlp.GraphGenerator;
-import org.junit.Rule;
+import mlpOld.DataLogger;
 import org.junit.Test;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.harness.junit.Neo4jRule;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;

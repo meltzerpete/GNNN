@@ -1,31 +1,61 @@
 package mlp;
 
+import networkComponents.UnitLabels;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.procedure.Context;
+import org.neo4j.procedure.Mode;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 
-import static org.neo4j.procedure.Mode.SCHEMA;
+import static networkComponents.Constants.DATA;
 
-/**
- * Created by Pete Meltzer on 30/10/17.
- */
 public class Execute {
 
     @Context
     public GraphDatabaseService db;
 
-    @Procedure(value = "mlp.proto1test1", mode = SCHEMA)
-    public void proto1test1(@Name(value="no. of trials") long nTrials) {
+    @Procedure(value = "mlp.connect", mode = Mode.SCHEMA)
+    public void connect() {
 
-        for (int i = 0; i < nTrials; i ++) {
-            System.out.printf("\rTrial: %d", i + 1);
-            db.execute("match (n) detach delete n;");
-            db.execute("call mlp.XOR(1000);");
-            db.execute("call mlp.createMLP();");
-            db.execute("call mlp.attach();");
-            db.execute("call mlp.train(100000);");
+        MLP mlp = new MLP(5, 3, 5, db);
+        mlp.initialize();
+
+        Node t = db.createNode(UnitLabels.TARGET);
+        Node[] d = new Node[5];
+
+        for (int i = 0; i < d.length; i++) {
+            d[i] = db.createNode(mnist.Execute.Labels.DATA);
+            d[i].setProperty(DATA, Math.random());
         }
-        System.out.println("\nTest Complete.");
+
+        mlp.connect(t, d);
+
+        double[] targets = {1.0, 1.0, 1.0, 0.0, 0.0};
+        long nPatterns = 10000;
+        long nOutputs = 5;
+
+        double error;
+        for (int i = 0; i < nPatterns; i++) {
+            mlp.forwardPass();
+            mlp.backwardPass(targets);
+            error = mlp.getMeanSquaredError(nPatterns, nOutputs, targets);
+            System.out.printf("Root mean squared error: %f\n", Math.sqrt(error));
+        }
     }
+
+    @Procedure(value = "mlp.testMNIST", mode = Mode.SCHEMA)
+    public void testMNIST(@Name("nTrain") long nTrain, @Name("nTest") long nTest) {
+
+        Thread worker = new Thread(new TestTask(nTrain, nTest, db));
+        worker.setDaemon(true);
+        worker.start();
+        try {
+            worker.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
